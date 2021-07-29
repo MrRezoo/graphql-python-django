@@ -62,5 +62,40 @@ class CreatePerson(graphene.Mutation):
         return CreatePerson(person=person_instance, ok=True)
 
 
+class UpdatePerson(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+        input = PersonInput()
+
+    person = graphene.Field(PersonType)
+    ok = graphene.Boolean(default_value=False)
+
+    @staticmethod
+    def mutate(parent, info, id, input=None):
+        person_instance = Person.objects.get(id=id)
+        person_instance.name = input.name if input.name is not None else person_instance.name
+        person_instance.age = input.age if input.age is not None else person_instance.age
+        person_instance.save()
+        ok = True
+        return UpdatePerson(person=person_instance, ok=ok)
+
+
+class DeletePerson(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID()
+
+    person = graphene.Field(PersonType)
+    ok = graphene.Boolean(default_value=False)
+
+    @staticmethod
+    def mutate(parent, info, id):
+        person_instance = Person.objects.get(id=id)
+        person_instance.delete()
+        ok = True
+        return DeletePerson(person=person_instance, ok=ok)
+
+
 class Mutate(graphene.ObjectType):
     create_person = CreatePerson.Field()
+    update_person = UpdatePerson.Field()
+    delete_person = DeletePerson.Field()
