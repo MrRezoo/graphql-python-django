@@ -48,7 +48,8 @@ class PersonInput(graphene.InputObjectType):
 
 
 class CarInput(graphene.InputObjectType):
-    person_id = graphene.Int()
+    # person_id = graphene.Int()
+    persons_id = graphene.List(graphene.ID)
     name = graphene.String()
     year = graphene.Int()
 
@@ -108,10 +109,22 @@ class CreateCar(graphene.Mutation):
     car = graphene.Field(CarType)
     ok = graphene.Boolean(default_value=False)
 
+    # @staticmethod
+    # def mutate(parent, info, input=None):
+    #     person_instance = Person.objects.get(id=input.person_id)
+    #     car_instance = Car.objects.create(person=person_instance, name=input.name, year=input.year)
+    #     ok = True
+    #     return CreateCar(car=car_instance, ok=ok)
+
     @staticmethod
     def mutate(parent, info, input=None):
-        person_instance = Person.objects.get(id=input.person_id)
-        car_instance = Car.objects.create(person=person_instance, name=input.name, year=input.year)
+        persons_list = list()
+        for person_id in input.persons_id:
+            person_instance = Person.objects.get(id=person_id)
+            persons_list.append(person_instance)
+
+        car_instance = Car.objects.create(name=input.name, year=input.year)
+        car_instance.person.set(persons_list)
         ok = True
         return CreateCar(car=car_instance, ok=ok)
 

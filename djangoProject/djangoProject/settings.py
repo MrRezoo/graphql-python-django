@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # local_app
     'home.apps.HomeConfig',
+    'accounts.apps.AccountsConfig',
 
     # third party app
     'graphene_django'
