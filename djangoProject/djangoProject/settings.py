@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+
 from .local_settings import SECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
 
     # third party app
-    'graphene_django'
+    'graphene_django',
+    'graphql_jwt'
 ]
 
 MIDDLEWARE = [
@@ -127,6 +129,14 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 GRAPHENE = {
-    'SCHEMA': 'djangoProject.schema.schema'
+    'SCHEMA': 'djangoProject.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
