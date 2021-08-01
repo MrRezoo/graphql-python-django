@@ -5,11 +5,11 @@ from graphene_django.types import DjangoObjectType, ObjectType
 
 class UserType(DjangoObjectType):
     class Meta:
-        Model = User
+        model = User
 
 
 class AccountsQuery(ObjectType):
-    user = graphene.Field(UserType, id=graphene.Int())
+    user = graphene.Field(UserType, id=graphene.ID())
 
     @staticmethod
     def resolve_user(parent, info, **kwargs):
@@ -27,7 +27,7 @@ class UserInput(graphene.InputObjectType):
 
 class CreateUser(graphene.Mutation):
     class Arguments:
-        input = UserInput(Required=True)
+        input = UserInput(required=True)
 
     ok = graphene.Boolean(default_value=False)
     user = graphene.Field(UserType)
